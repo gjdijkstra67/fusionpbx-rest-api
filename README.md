@@ -5,6 +5,13 @@ An HTTP API for [FusionPBX](http://www.fusionpbx.com/).
 To install it, clone into fusionpbx's `app/` folder. Make sure this repo clones into a folder called `rest_api`.
 Then log into the FusionPBX web interface, select Advanced -> Upgrade, check Schema and Menu Defaults, press Execute.
 
+after code change do:
+# Set ownership to web server user
+chown -R www-data:www-data /var/www/fusionpbx/app/rest_api/
+
+# Set proper permissions
+chmod -R 755 /var/www/fusionpbx/app/rest_api/
+
 # Use
 
 To use the API you must have an API token. superadmins can generate these by opening the REST API app from the FusionPBX application menu. All requests must include a token in the HTTP Authorization header.
@@ -57,6 +64,45 @@ looks up details for a particular destination
 | `domain_name` | no       | Name of the domain to look up. Required if `domain_uuid` is not specified. |
 
 looks up details of a domain. Mostly useful for converting between domain uuid and domain name.
+
+## `domain-list`
+
+| Parameter     | Required | Description |
+|---------------|----------|-------------|
+| none          | n/a      | Lists all domains |
+
+returns all domains ordered by domain name.
+
+## `domain-create`
+
+| Parameter             | Required | Description |
+|-----------------------|----------|-------------|
+| `domain_name`         | yes      | Unique name of the domain to create |
+| `domain_enabled`      | no       | Boolean enabled flag. Defaults to `true` |
+| `domain_description`  | no       | Free-form description |
+| `domain_parent_uuid`  | no       | Parent domain UUID for hierarchical domain setups |
+
+creates a new domain.
+
+## `domain-update`
+
+| Parameter             | Required | Description |
+|-----------------------|----------|-------------|
+| `domain_uuid`         | yes      | UUID of the domain to update |
+| `domain_name`         | no       | New unique domain name |
+| `domain_enabled`      | no       | Boolean enabled flag |
+| `domain_description`  | no       | New description |
+| `domain_parent_uuid`  | no       | Parent UUID (set to empty/null to clear) |
+
+updates an existing domain. Only fields you provide are changed.
+
+## `domain-delete`
+
+| Parameter     | Required | Description |
+|---------------|----------|-------------|
+| `domain_uuid` | yes      | UUID of the domain to delete |
+
+deletes a domain. If the domain still has related records, the action returns an error.
 
 ## `extension-create`
 
